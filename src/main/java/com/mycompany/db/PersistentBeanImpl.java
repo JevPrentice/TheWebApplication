@@ -53,8 +53,7 @@ public class PersistentBeanImpl implements PersistentBean {
 
     @Override
     public Doctor createDoctor(Doctor d) {
-        Doctor persistedDoc = em.merge(d);
-        return persistedDoc;
+        return em.merge(d);
     }
 
 }
