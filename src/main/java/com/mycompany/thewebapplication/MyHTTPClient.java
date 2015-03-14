@@ -10,6 +10,7 @@ import com.mycompany.db.entities.Doctor;
 import java.util.logging.Level;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,7 +23,8 @@ import javax.ws.rs.ext.MessageBodyWriter;
  */
 public class MyHTTPClient {
 
-    private static final String URL = "http://localhost:8080/TheWebApplication/rs/getDoctor";
+    private static final String getDoctor = "http://localhost:8080/TheWebApplication/rs/getDoctor";
+    private static final String createDoctor = "http://localhost:8080/TheWebApplication/rs/createDoctor";
 
     private Client getWebResourceClient() {
         return ClientBuilder.newBuilder()
@@ -34,16 +36,17 @@ public class MyHTTPClient {
     public static void main(String[] args) {
 
         MyHTTPClient c = new MyHTTPClient();
-//        Doctor doctor = new Doctor("MID123", "John", "Doe");
+        Doctor doctor = new Doctor("MID123", "John", "Doe");
+//        String jsonDoctor = "\"{\\\"id\\\":null,\\\"mediId\\\":\\\"MID123\\\",\\\"name\\\":\\\"John\\\",\\\"surname\\\":\\\"Doe\\\"}\"";
 
         try {
 
-            WebTarget target = c.getWebResourceClient().target(URL); //TODO DB
-            Response response;
+            WebTarget target = c.getWebResourceClient().target(createDoctor); //TODO DB
+//            Response response;
+//            response = target.request(MediaType.APPLICATION_JSON).post();
 
-            //target.queryParam("doctor", "{\"id\":null,\"mediId\":\"MID123\",\"name\":\"John\",\"surname\":\"Doe\"}");
-            response = target.request(MediaType.APPLICATION_JSON).get();
-
+            Response response = target.request().put(Entity.json(doctor));
+            
             String responseString = response.readEntity(String.class);
             int responseCode = response.getStatus();
 
