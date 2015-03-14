@@ -56,4 +56,13 @@ public class RestService {
 
     }
 
+    @Path("/getDoctor")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Doctor getDoctors() {
+
+        return new Doctor("MID123", "John", "Doe");
+
+    }
+
 }

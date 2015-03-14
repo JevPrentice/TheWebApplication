@@ -5,6 +5,7 @@
  */
 package com.mycompany.db.entities;
 
+import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(schema = "public", name = "doctor")
-public class Doctor {
+public class Doctor implements Serializable {
 
     @Id
     private UUID id;
@@ -24,6 +25,9 @@ public class Doctor {
     private String name;
     private String surname;
 
+    public Doctor() {
+    }
+    
     public Doctor(String mediId, String name, String surname) {
         this.mediId = mediId;
         this.name = name;
