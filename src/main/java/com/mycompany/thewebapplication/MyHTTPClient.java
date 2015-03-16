@@ -38,15 +38,18 @@ public class MyHTTPClient {
         MyHTTPClient c = new MyHTTPClient();
         Doctor doctor = new Doctor("MID123", "John", "Doe");
 //        String jsonDoctor = "\"{\\\"id\\\":null,\\\"mediId\\\":\\\"MID123\\\",\\\"name\\\":\\\"John\\\",\\\"surname\\\":\\\"Doe\\\"}\"";
-
+        System.out.println(doctor);
         try {
 
             WebTarget target = c.getWebResourceClient().target(createDoctor); //TODO DB
 //            Response response;
 //            response = target.request(MediaType.APPLICATION_JSON).post();
 
+            System.out.println("URL: " + createDoctor);
+            System.out.println("put entity: " + Entity.json(doctor));
+
             Response response = target.request().put(Entity.json(doctor));
-            
+
             String responseString = response.readEntity(String.class);
             int responseCode = response.getStatus();
 

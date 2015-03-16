@@ -21,6 +21,7 @@ import javax.persistence.Table;
 @Entity
 @Table(schema = "public", name = "doctor")
 @JsonTypeName("Doctor")
+//@JsonProperty
 public class Doctor implements Serializable {
 
     @Id
@@ -33,37 +34,25 @@ public class Doctor implements Serializable {
     }
 
     @JsonCreator
-    public Doctor(@JsonProperty ("medID") String mediId, @JsonProperty ("name") String name, @JsonProperty ("surname")String surname) {
+    public Doctor(@JsonProperty("medID") String mediId, @JsonProperty("name") String name, @JsonProperty("surname") String surname) {
         this.mediId = mediId;
         this.name = name;
         this.surname = surname;
     }
 
-    @JsonProperty ("medID")
+    @JsonProperty("medID")
     public String getMediId() {
         return mediId;
     }
-    
-    public void setMediId(String mediId) {
-        this.mediId = mediId;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @JsonProperty ("name")
+    @JsonProperty("name")
     public String getName() {
         return name;
     }
 
-    @JsonProperty ("surname")
+    @JsonProperty("surname")
     public String getSurname() {
         return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     @Override
@@ -74,6 +63,7 @@ public class Doctor implements Serializable {
         return id.toString();
     }
 
+    @JsonProperty("id")
     public UUID getId() {
         return id;
     }
@@ -81,4 +71,16 @@ public class Doctor implements Serializable {
     public void setId(UUID id) {
         this.id = id;
     }
+
+//     public void setMediId(String mediId) {
+//        this.mediId = mediId;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//    
+//     public void setSurname(String surname) {
+//        this.surname = surname;
+//    }
 }

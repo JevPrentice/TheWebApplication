@@ -22,16 +22,16 @@ import javax.ws.rs.core.Response;
 @Path("")
 @ApplicationScoped
 public class RestService {
-    
+
     @Inject
     PersistentBean bean;
-    
+
     @Path("/test")
     @GET
     public String getTest() {
         return "its online!";
     }
-    
+
     @Path("/populateConfigs")
     @GET
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -39,42 +39,48 @@ public class RestService {
         bean.populateDefaultConfigValues();
         return "done";
     }
-    
+
     @GET
     @Path("/props")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, String> getProps() {
         return bean.getProperties();
     }
-    
+
+    //{"medID":"MID123","name":"John","surname":"Doe","id":null}
     @Path("/createDoctor")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
 //    @Produces(MediaType.APPLICATION_JSON)
     public Response createDoctor(Doctor doctor) {
-        
+
+        System.out.println("entering createDoctor - Doctor=" + doctor);
+
         if (doctor == null) {
-            System.out.println("1");
+            System.out.println("1, doctor == null");
             return Response.status(Response.Status.BAD_REQUEST).build();
+        } else if (doctor != null) {
+            System.out.println("2, doctor == null");
         } else {
-            System.out.println("2");
+            System.out.println("3, doctor != null && !(doctor == null) ");
         }
-        
+
         System.out.println("doctor: " + doctor);
-        
+
 //        Doctor response = bean.createDoctor(doctor);
 //        return Response.ok(response.getId().toString()).build();
+        System.out.println("ending createDoctor - Doctor=" + doctor);
         return Response.ok().build();
-        
+
     }
-    
+
     @Path("/getDoctor")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Doctor getDoctors() {
-        
+
         return new Doctor("MID123", "John", "Doe");
-        
+
     }
-    
+
 }
