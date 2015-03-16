@@ -5,6 +5,10 @@
  */
 package com.mycompany.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,7 +20,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(schema = "public", name = "doctor")
-public class Doctor {
+@JsonTypeName("Doctor")
+public class Doctor implements Serializable {
 
     @Id
     private UUID id;
@@ -24,16 +29,21 @@ public class Doctor {
     private String name;
     private String surname;
 
-    public Doctor(String mediId, String name, String surname) {
+    public Doctor() {
+    }
+
+    @JsonCreator
+    public Doctor(@JsonProperty ("medID") String mediId, @JsonProperty ("name") String name, @JsonProperty ("surname")String surname) {
         this.mediId = mediId;
         this.name = name;
         this.surname = surname;
     }
 
+    @JsonProperty ("medID")
     public String getMediId() {
         return mediId;
     }
-
+    
     public void setMediId(String mediId) {
         this.mediId = mediId;
     }
@@ -42,10 +52,12 @@ public class Doctor {
         this.name = name;
     }
 
+    @JsonProperty ("name")
     public String getName() {
         return name;
     }
 
+    @JsonProperty ("surname")
     public String getSurname() {
         return surname;
     }
@@ -56,7 +68,7 @@ public class Doctor {
 
     @Override
     public String toString() {
-        if (id == null){
+        if (id == null) {
             return null;
         }
         return id.toString();

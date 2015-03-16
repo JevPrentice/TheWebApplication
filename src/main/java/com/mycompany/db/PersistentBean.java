@@ -7,11 +7,13 @@ package com.mycompany.db;
 
 import com.mycompany.db.entities.Doctor;
 import java.util.Map;
+import javax.ejb.Local;
 
 /**
  *
  * @author Tranquility
  */
+@Local
 public interface PersistentBean {
 
     public Map<String, String> getProperties();

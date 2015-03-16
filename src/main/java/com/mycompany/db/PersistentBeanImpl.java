@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
@@ -27,7 +28,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
  *
  * @author jprentice
  */
-@RequestScoped
+@Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PersistentBeanImpl implements PersistentBean {
 
