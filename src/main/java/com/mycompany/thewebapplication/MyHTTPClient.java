@@ -6,7 +6,7 @@
 package com.mycompany.thewebapplication;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.mycompany.db.entities.Doctor;
+import com.mycompany.db.entities.DoctorImpl;
 import java.util.logging.Level;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -36,7 +36,7 @@ public class MyHTTPClient {
     public static void main(String[] args) {
 
         MyHTTPClient c = new MyHTTPClient();
-        Doctor doctor = new Doctor("MID123", "John", "Doe");
+        DoctorImpl doctor = new DoctorImpl("MID123", "John", "Doe");
 //        String jsonDoctor = "\"{\\\"id\\\":null,\\\"mediId\\\":\\\"MID123\\\",\\\"name\\\":\\\"John\\\",\\\"surname\\\":\\\"Doe\\\"}\"";
         System.out.println(doctor);
         try {

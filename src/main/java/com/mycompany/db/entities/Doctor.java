@@ -5,82 +5,33 @@
  */
 package com.mycompany.db.entities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serializable;
 import java.util.UUID;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  *
- * @author Tranquility
+ * @author jevprentice
  */
-@Entity
-@Table(schema = "public", name = "doctor")
 @JsonTypeName("Doctor")
-//@JsonProperty
-public class Doctor implements Serializable {
-
-    @Id
-    private UUID id;
-    private String mediId;
-    private String name;
-    private String surname;
-
-    public Doctor() {
-    }
-
-    @JsonCreator
-    public Doctor(@JsonProperty("medID") String mediId, @JsonProperty("name") String name, @JsonProperty("surname") String surname) {
-        this.mediId = mediId;
-        this.name = name;
-        this.surname = surname;
-    }
+@JsonSubTypes({
+    @JsonSubTypes.Type(DoctorImpl.class)
+})
+@JsonDeserialize(as = DoctorImpl.class)
+interface Doctor extends Serializable{
 
     @JsonProperty("medID")
-    public String getMediId() {
-        return mediId;
-    }
+    public String getMediId();
 
     @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
+    public String getName();
 
     @JsonProperty("surname")
-    public String getSurname() {
-        return surname;
-    }
-
-    @Override
-    public String toString() {
-        if (id == null) {
-            return null;
-        }
-        return id.toString();
-    }
+    public String getSurname();
 
     @JsonProperty("id")
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-//     public void setMediId(String mediId) {
-//        this.mediId = mediId;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//    
-//     public void setSurname(String surname) {
-//        this.surname = surname;
-//    }
+    public UUID getId();
 }

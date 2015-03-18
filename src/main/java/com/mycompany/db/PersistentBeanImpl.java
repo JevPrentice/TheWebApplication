@@ -7,7 +7,7 @@ package com.mycompany.db;
 
 import com.mycompany.db.entities.ConfigProperties;
 import com.mycompany.db.entities.ConfigPropertiesImpl;
-import com.mycompany.db.entities.Doctor;
+import com.mycompany.db.entities.DoctorImpl;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,7 +53,7 @@ public class PersistentBeanImpl implements PersistentBean {
     }
 
     @Override
-    public Doctor createDoctor(Doctor d) {
+    public DoctorImpl createDoctor(DoctorImpl d) {
         return em.merge(d);
     }
 

@@ -1,7 +1,7 @@
 package com.mycompany.thewebapplication;
 
 import com.mycompany.db.PersistentBean;
-import com.mycompany.db.entities.Doctor;
+import com.mycompany.db.entities.DoctorImpl;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -52,7 +52,7 @@ public class RestService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
 //    @Produces(MediaType.APPLICATION_JSON)
-    public Response createDoctor(Doctor doctor) {
+    public Response createDoctor(DoctorImpl doctor) {
 
         System.out.println("entering createDoctor - Doctor=" + doctor);
 
@@ -77,9 +77,9 @@ public class RestService {
     @Path("/getDoctor")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Doctor getDoctors() {
+    public DoctorImpl getDoctors() {
 
-        return new Doctor("MID123", "John", "Doe");
+        return new DoctorImpl("MID123", "John", "Doe");
 
     }
 
