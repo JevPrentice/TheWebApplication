@@ -5,6 +5,7 @@
  */
 package com.mycompany.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -16,13 +17,16 @@ import java.util.UUID;
  *
  * @author jevprentice
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeName("Doctor")
 @JsonSubTypes({
     @JsonSubTypes.Type(DoctorImpl.class)
 })
 @JsonDeserialize(as = DoctorImpl.class)
-interface Doctor extends Serializable{
+public interface Doctor extends Serializable{
 
+    public void setId(UUID id);
+    
     @JsonProperty("medID")
     public String getMediId();
 

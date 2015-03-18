@@ -7,8 +7,10 @@ package com.mycompany.db;
 
 import com.mycompany.db.entities.ConfigProperties;
 import com.mycompany.db.entities.ConfigPropertiesImpl;
+import com.mycompany.db.entities.Doctor;
 import com.mycompany.db.entities.DoctorImpl;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -53,8 +55,9 @@ public class PersistentBeanImpl implements PersistentBean {
     }
 
     @Override
-    public DoctorImpl createDoctor(DoctorImpl d) {
-        return em.merge(d);
+    public Doctor createDoctor(Doctor doctor) {
+        doctor.setId(UUID.randomUUID());
+        return em.merge(doctor);
     }
 
 }

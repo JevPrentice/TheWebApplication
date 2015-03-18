@@ -59,20 +59,18 @@ public class DoctorImpl implements Doctor {
 
     @Override
     public String toString() {
-        if (id == null) {
-            return null;
-        }
-        return id.toString();
+        return getName() + getSurname();
     }
 
-//    @JsonProperty("id")
+    @Override
     public UUID getId() {
         return id;
     }
 
-//    public void setId(UUID id) {
-//        this.id = id;
-//    }
+    @Override
+    public void setId(UUID id) {
+        this.id = id;
+    }
 //     public void setMediId(String mediId) {
 //        this.mediId = mediId;
 //    }

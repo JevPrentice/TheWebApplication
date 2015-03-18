@@ -5,6 +5,7 @@
  */
 package com.mycompany.db;
 
+import com.mycompany.db.entities.Doctor;
 import com.mycompany.db.entities.DoctorImpl;
 import java.util.Map;
 import javax.ejb.Local;
@@ -20,6 +21,6 @@ public interface PersistentBean {
     
     public void populateDefaultConfigValues();
     
-    public DoctorImpl createDoctor(DoctorImpl doctor);
+    public Doctor createDoctor(Doctor doctor);
     
 }

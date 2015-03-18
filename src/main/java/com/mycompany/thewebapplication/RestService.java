@@ -1,6 +1,7 @@
 package com.mycompany.thewebapplication;
 
 import com.mycompany.db.PersistentBean;
+import com.mycompany.db.entities.Doctor;
 import com.mycompany.db.entities.DoctorImpl;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
@@ -52,22 +53,23 @@ public class RestService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
 //    @Produces(MediaType.APPLICATION_JSON)
-    public Response createDoctor(DoctorImpl doctor) {
+    public Response createDoctor(Doctor doctor) {
 
         System.out.println("entering createDoctor - Doctor=" + doctor);
 
         if (doctor == null) {
             System.out.println("1, doctor == null");
             return Response.status(Response.Status.BAD_REQUEST).build();
-        } else if (doctor != null) {
-            System.out.println("2, doctor == null");
-        } else {
-            System.out.println("3, doctor != null && !(doctor == null) ");
-        }
+        } 
+//        else if (doctor != null) {
+//            System.out.println("2, doctor != null");
+//        } else {
+//            System.out.println("3, doctor != null && !(doctor == null) ");
+//        }
 
-        System.out.println("doctor: " + doctor);
+//        System.out.println("doctor: " + doctor);
 
-//        Doctor response = bean.createDoctor(doctor);
+        Doctor response = bean.createDoctor(doctor);
 //        return Response.ok(response.getId().toString()).build();
         System.out.println("ending createDoctor - Doctor=" + doctor);
         return Response.ok().build();
