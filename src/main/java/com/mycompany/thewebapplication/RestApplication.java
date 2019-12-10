@@ -6,22 +6,22 @@
 package com.mycompany.thewebapplication;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import java.util.HashSet;
-import java.util.Set;
+import org.glassfish.jersey.CommonProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
-import org.glassfish.jersey.CommonProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- *
- * @author jevprentice
+ * @author Jev Prentice
  */
-@ApplicationPath("/rs")
+@ApplicationPath("api")
 public class RestApplication extends Application implements Feature {
 
     @Override
