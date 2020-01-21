@@ -3,23 +3,23 @@ package com.mycompany.thewebapplication;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
+import java.time.Instant;
+import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
 /**
  * @author Jev Prentice
@@ -31,10 +31,24 @@ public class RestService {
 
     private static final Logger LOGGER = Logger.getLogger(RestService.class.getName());
 
-    private Client getWebResourceClient() {
-        return ClientBuilder.newBuilder()
-                .register(JacksonJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class)
-                .build();
+    private static class ClientFactory implements Supplier<Client> {
+
+	private final String username;
+	private final byte[] password;
+
+	public ClientFactory(final String username, final byte[] password) {
+	    this.username = Objects.requireNonNull(username, "username must not be null");
+	    this.password = Objects.requireNonNull(password, "password must not be null");
+	}
+
+	@Override
+	public Client get() {
+	    return ClientBuilder.newBuilder()
+		    .register(JacksonJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class)
+		    .register(new LoggingFeature(LOGGER, Verbosity.PAYLOAD_ANY))
+		    .register(HttpAuthenticationFeature.basic(username, password))
+		    .build();
+	}
     }
 
     // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/simple -s | jq
@@ -42,36 +56,63 @@ public class RestService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ObjectNode getSimple() {
-        final ObjectNode result = JsonNodeFactory.instance.objectNode();
-        result.put("status", "OK");
-        result.put("timestamp", Instant.now().toString());
-        return result;
+	return buildDummyJsonResponse();
     }
 
-    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/google -s | jq
-    @Path("google")
+    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/url -s | jq
+    @Path("url")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ObjectNode getGoogle() {
-        final long beforeConnectionMillis = System.currentTimeMillis();
-        final String url = "http://www.google.com";
-        final WebTarget target = getWebResourceClient().target(url);
-        final Response response = target.request().get();
-        final long requestDurationMillis = (System.currentTimeMillis() - beforeConnectionMillis);
+    public ObjectNode getConfiguredUrl() {
 
-        final int responseCode = response.getStatus();
+	final String url = System.getProperty("thewebapplication.url");
+	final String username = System.getProperty("thewebapplication.username", "");
+	final byte[] password = System.getProperty("thewebapplication.password", "").getBytes();
 
-        LOGGER.log(Level.INFO, "{0}: {1}", new Object[]{responseCode, url});
-        final String responseString = response.readEntity(String.class);
-        Objects.requireNonNull(responseString);
+	final long beforeConnectionMillis = System.currentTimeMillis();
 
-        final ObjectNode result = JsonNodeFactory.instance.objectNode();
-        result.put("status", responseCode);
-        result.put("timestamp", Instant.now().toString());
-        result.put("url", url);
-        result.put("requestDurationMillis", requestDurationMillis);
-        //result.put("responseString", responseString);
+	Client client = null;
+	Response response = null;
+	try {
+	    client = new ClientFactory(username, password).get();
+	    response = client.target(url).request().get();
+	    return buildJsonResponse(url, beforeConnectionMillis, response);
+	} catch (final Exception ex) {
+	    Logger.getLogger(RestService.class.getName()).log(Level.SEVERE, null, ex);
+	    throw new RuntimeException(ex);
+	} finally {
+	    if (response != null) {
+		response.close();
+		LOGGER.log(Level.INFO, "Closed response for {0}", url);
+	    }
+	    if (client != null) {
+		client.close();
+		LOGGER.log(Level.INFO, "Closed client for {0}", url);
+	    }
+	}
+    }
 
-        return result;
+    private static ObjectNode buildDummyJsonResponse() {
+	return JsonNodeFactory.instance.objectNode()
+		.put("status", "OK - Dummy")
+		.put("timestamp", Instant.now().toString())
+		.put("url", "no-url");
+    }
+
+    private static ObjectNode buildJsonResponse(
+	    final String url,
+	    final long beforeConnectionMillis,
+	    final Response response
+    ) {
+	final String responseString = response.readEntity(String.class);
+	final long requestDurationMillis = (System.currentTimeMillis() - beforeConnectionMillis);
+	final ObjectNode node = JsonNodeFactory.instance.objectNode()
+		.put("status", response.getStatus())
+		.put("timestamp", Instant.now().toString())
+		.put("url", url)
+		.put("requestDurationMillis", requestDurationMillis);
+	LOGGER.log(Level.INFO, "{0} {1}", new Object[]{url, response.getStatus()});
+	LOGGER.log(Level.FINE, responseString);
+	return node;
     }
 }
