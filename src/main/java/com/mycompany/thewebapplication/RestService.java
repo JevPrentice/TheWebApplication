@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
+import javax.validation.ValidationException;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+//import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
@@ -33,21 +35,32 @@ public class RestService {
 
     private static class ClientFactory implements Supplier<Client> {
 
+	private final boolean https;
 	private final String username;
 	private final byte[] password;
 
-	public ClientFactory(final String username, final byte[] password) {
+	public ClientFactory() {
+	    this.https = false;
+	    this.username = "";
+	    this.password = new byte[0];
+	}
+
+	public ClientFactory(final boolean https, final String username, final byte[] password) {
+	    this.https = https;
 	    this.username = Objects.requireNonNull(username, "username must not be null");
 	    this.password = Objects.requireNonNull(password, "password must not be null");
 	}
 
 	@Override
 	public Client get() {
-	    return ClientBuilder.newBuilder()
-		    .register(JacksonJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class)
-		    .register(new LoggingFeature(LOGGER, Verbosity.PAYLOAD_ANY))
-		    .register(HttpAuthenticationFeature.basic(username, password))
-		    .build();
+	    final ClientBuilder builder
+		    = ClientBuilder.newBuilder()
+			    .register(new LoggingFeature(LOGGER, Verbosity.PAYLOAD_ANY)) // jersey.version = 2.26
+			    // .register(new LoggingFilter(LOGGER, true)) // jersey.version = 2.10.4
+			    .register(JacksonJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class); // jersey.version = 2.10.4
+	    if (https)
+		builder.register(HttpAuthenticationFeature.basic(username, password));
+	    return builder.build();
 	}
     }
 
@@ -59,23 +72,37 @@ public class RestService {
 	return buildDummyJsonResponse();
     }
 
+    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/url -X POST -d 'https://jsonplaceholder.typicode.com/todos/1'
+    @Path("url")
+    @POST
+    public void setUrl(final String url) {
+	System.setProperty("thewebapplication.url", url);
+	LOGGER.log(Level.INFO, "Set system property thewebapplication.url as {0}", url);
+    }
+
     // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/url -s | jq
     @Path("url")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ObjectNode getConfiguredUrl() {
+    public ObjectNode getUrl() {
 
 	final String url = System.getProperty("thewebapplication.url");
 	final String username = System.getProperty("thewebapplication.username", "");
 	final byte[] password = System.getProperty("thewebapplication.password", "").getBytes();
+
+	if (url == null || url.isEmpty())
+	    throw new ValidationException("The system property thewebapplication.url must first be set!");
 
 	final long beforeConnectionMillis = System.currentTimeMillis();
 
 	Client client = null;
 	Response response = null;
 	try {
-	    client = new ClientFactory(username, password).get();
-	    response = client.target(url).request().get();
+	    client = new ClientFactory(url.startsWith("https://"), username, password).get();
+	    response = client.target(url)
+		    .request(MediaType.APPLICATION_JSON)
+		    .accept(MediaType.APPLICATION_JSON)
+		    .get();
 	    return buildJsonResponse(url, beforeConnectionMillis, response);
 	} catch (final Exception ex) {
 	    Logger.getLogger(RestService.class.getName()).log(Level.SEVERE, null, ex);
