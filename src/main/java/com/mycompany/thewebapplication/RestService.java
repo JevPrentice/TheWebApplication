@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-//import org.glassfish.jersey.filter.LoggingFilter;
+//import org.glassfish.jersey.filter.LoggingFilter; // jersey.version = 2.10.4
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
@@ -64,7 +64,7 @@ public class RestService {
 	}
     }
 
-    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/simple -s | jq
+    // curl http://localhost:8080/yet-another-javaee-app-1.0-SNAPSHOT/api/v1/simple -s | jq
     @Path("simple")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -72,26 +72,26 @@ public class RestService {
 	return buildDummyJsonResponse();
     }
 
-    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/url -X POST -d 'https://jsonplaceholder.typicode.com/todos/1'
+    // curl http://localhost:8080/yet-another-javaee-app-1.0-SNAPSHOT/api/v1/url -X POST -d 'https://jsonplaceholder.typicode.com/todos/1'
     @Path("url")
     @POST
     public void setUrl(final String url) {
 	System.setProperty("thewebapplication.url", url);
-	LOGGER.log(Level.INFO, "Set system property thewebapplication.url as {0}", url);
+	LOGGER.log(Level.INFO, "Set system property yet-another-javaee-app.url as {0}", url);
     }
 
-    // curl http://localhost:8080/TheWebApplication-1.0-SNAPSHOT/api/v1/url -s | jq
+    // curl http://localhost:8080/yet-another-javaee-app-1.0-SNAPSHOT/api/v1/url -s | jq
     @Path("url")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ObjectNode getUrl() {
 
-	final String url = System.getProperty("thewebapplication.url");
-	final String username = System.getProperty("thewebapplication.username", "");
-	final byte[] password = System.getProperty("thewebapplication.password", "").getBytes();
+	final String url = System.getProperty("yet-another-javaee-app.url");
+	final String username = System.getProperty("yet-another-javaee-app.username", "");
+	final byte[] password = System.getProperty("yet-another-javaee-app.password", "").getBytes();
 
 	if (url == null || url.isEmpty())
-	    throw new ValidationException("The system property thewebapplication.url must first be set!");
+	    throw new ValidationException("The system property yet-another-javaee-app.url must first be set!");
 
 	final long beforeConnectionMillis = System.currentTimeMillis();
 
