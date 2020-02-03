@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.thewebapplication;
+package com.yet_another_javaee_app;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class RestApplication extends Application implements Feature {
 	resources.add(com.fasterxml.jackson.jaxrs.base.JsonMappingExceptionMapper.class);
 	resources.add(com.fasterxml.jackson.jaxrs.base.JsonParseExceptionMapper.class);
 
-	resources.add(com.mycompany.thewebapplication.RestService.class);
+	resources.add(com.yet_another_javaee_app.RestService.class);
 
     }
 }

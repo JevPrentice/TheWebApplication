@@ -1,4 +1,4 @@
-package com.mycompany.thewebapplication;
+package com.yet_another_javaee_app;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -76,7 +76,7 @@ public class RestService {
     @Path("url")
     @POST
     public void setUrl(final String url) {
-	System.setProperty("thewebapplication.url", url);
+	System.setProperty("yet-another-javaee-app.url", url);
 	LOGGER.log(Level.INFO, "Set system property yet-another-javaee-app.url as {0}", url);
     }
 
